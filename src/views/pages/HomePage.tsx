@@ -3,8 +3,15 @@ import { useHomeViewModel } from '../../viewmodels';
 import './HomePage.css';
 
 export const HomePage: React.FC = () => {
-  const { recipes, searchQuery, setSearchQuery, handleSearch, resetToRandom } =
-    useHomeViewModel();
+  const {
+    recipes,
+    searchQuery,
+    favoriteIds,
+    setSearchQuery,
+    handleSearch,
+    resetToRandom,
+    toggleFavorite,
+  } = useHomeViewModel();
 
   return (
     <main className="home-container">
@@ -45,23 +52,34 @@ export const HomePage: React.FC = () => {
           <div className="no-recipes">No recipes found. Try another search term!</div>
         ) : (
           <div className="recipe-grid">
-            {recipes.map((recipe) => (
-              <article className="recipe-card" key={recipe.id}>
-                <div className="card-image-wrapper">
-                  <img
-                    src={recipe.thumbnail}
-                    alt={recipe.name}
-                    className="card-image"
-                    loading="lazy"
-                  />
-                  <span className="card-tag">{recipe.category}</span>
-                </div>
-                <div className="card-content">
-                  <span className="card-area">{recipe.area} Cuisine</span>
-                  <h3 className="card-title">{recipe.name}</h3>
-                </div>
-              </article>
-            ))}
+            {recipes.map((recipe) => {
+              const isFav = favoriteIds.has(recipe.id);
+              return (
+                <article className="recipe-card" key={recipe.id}>
+                  <div className="card-image-wrapper">
+                    <img
+                      src={recipe.thumbnail}
+                      alt={recipe.name}
+                      className="card-image"
+                      loading="lazy"
+                    />
+                    <span className="card-tag">{recipe.category}</span>
+                    <button
+                      type="button"
+                      className={`favorite-toggle-btn ${isFav ? 'active' : ''}`}
+                      onClick={() => toggleFavorite(recipe)}
+                      aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+                    >
+                      {isFav ? '❤️' : '🤍'}
+                    </button>
+                  </div>
+                  <div className="card-content">
+                    <span className="card-area">{recipe.area} Cuisine</span>
+                    <h3 className="card-title">{recipe.name}</h3>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
       </section>

@@ -79,3 +79,31 @@ Created API service layer in `src/services/mealApi.ts` implementing `searchMeals
 
 **Summary of Output:**
 Created `useHomeViewModel` custom hook in `src/viewmodels/useHomeViewModel.ts` to manage initial random recipes loading and query searches. Connected `HomePage.tsx` view to render a search input bar and responsive recipe cards grid using plain CSS (`HomePage.css`).
+
+---
+
+## Prompt 5: Firebase Setup & Favorites Service
+
+**Prompt Text:**
+> Set up Firebase in this project. Initialize it in src/services/firebase.ts, 
+> reading all config values from Vite environment variables 
+> (import.meta.env.VITE_FIREBASE_*) — do not hardcode any config values.
+> 
+> Create a favoritesService in src/services/ with:
+> - addFavorite(userId: string, favorite: UserFavorite)
+> - removeFavorite(userId: string, recipeId: string)
+> - getFavorites(userId: string): returns UserFavorite[]
+> 
+> These should read/write to the Realtime Database, keyed under each 
+> user's ID, using the UserFavorite model from src/models/.
+> 
+> Add a favorite toggle (heart icon or button) on each recipe card in 
+> the Home view. Build out the Favorites view-model and FavoritesPage 
+> to display the current user's saved recipes by calling getFavorites.
+> 
+> Constraint: since authentication isn't implemented yet, use a fixed 
+> placeholder user ID string (e.g. "test-user-1") for now — this will 
+> be replaced with the real logged-in user's ID in the next step.
+
+**Summary of Output:**
+Initialized Firebase Realtime Database in `src/services/firebase.ts` reading Vite env vars. Built `favoritesService.ts` for Firebase RTDB CRUD operations under `favorites/${userId}`. Added favorite toggle (heart button) on Home recipe cards via `useHomeViewModel`, and implemented `useFavoritesViewModel` hook with `FavoritesPage.tsx` view.
