@@ -1,11 +1,5 @@
 // MVVM Model Layer
-// Holds data contracts, types, and core business logic schemas.
+// Holds data contracts, types, and core business domain schemas.
 
-export interface Recipe {
-  id: string;
-  title: string;
-  imageUrl?: string;
-  summary?: string;
-  readyInMinutes?: number;
-  servings?: number;
-}
+export * from './Recipe';
+export * from './Favorite';

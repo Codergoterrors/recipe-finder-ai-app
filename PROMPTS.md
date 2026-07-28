@@ -22,3 +22,19 @@
 Established MVVM directory structure (`src/models`, `src/viewmodels`, `src/views`), configured `react-router-dom` with routes for Home (`/`) and Favorites (`/favorites`), created sticky glassmorphic Header navigation with active link highlighting, and added base plain CSS styles.
 
 ---
+
+## Prompt 2: Data Models (TypeScript Interfaces)
+
+**Prompt Text:**
+> Create the data models for this app in a models/ folder (or add to 
+> the existing src/models/index.ts): 
+> - Recipe model: id, name, category, area, thumbnail image URL, 
+>   instructions
+> - User favorite model: recipe id, name, thumbnail (only what's 
+>   needed to render a favorites list card)
+> 
+> These are just TypeScript interfaces/types — no logic, no fetching, 
+> no components yet.
+
+**Summary of Output:**
+Defined TypeScript interfaces `Recipe` and `UserFavorite` in `src/models/Recipe.ts` and `src/models/Favorite.ts`, re-exported via `src/models/index.ts`.
