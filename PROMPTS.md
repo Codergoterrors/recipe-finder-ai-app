@@ -59,3 +59,23 @@ Defined TypeScript interfaces `Recipe` and `UserFavorite` in `src/models/Recipe.
 
 **Summary of Output:**
 Created API service layer in `src/services/mealApi.ts` implementing `searchMeals(query)` and `getRandomMeals(count)`, mapping raw TheMealDB JSON to the `Recipe` model without managing loading/error states inside the service.
+
+---
+
+## Prompt 4: Home ViewModel & View
+
+**Prompt Text:**
+> Create a HomeViewModel (as a custom hook in src/viewmodels/) that on 
+> mount loads a set of random recipes using getRandomMeals from the 
+> service layer, and exposes a search function that replaces the 
+> current results with matches from searchMeals. Then create the Home 
+> view (src/views/pages/HomePage.tsx) that renders a grid of recipe 
+> cards (thumbnail, name, category) using this view-model's state, plus 
+> a search input tied to the search function.
+> 
+> Constraint: HomePage should only render UI — no fetch calls, no 
+> business logic directly inside the component. All state and logic 
+> lives in the view-model.
+
+**Summary of Output:**
+Created `useHomeViewModel` custom hook in `src/viewmodels/useHomeViewModel.ts` to manage initial random recipes loading and query searches. Connected `HomePage.tsx` view to render a search input bar and responsive recipe cards grid using plain CSS (`HomePage.css`).
