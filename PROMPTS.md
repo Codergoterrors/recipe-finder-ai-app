@@ -38,3 +38,24 @@ Established MVVM directory structure (`src/models`, `src/viewmodels`, `src/views
 
 **Summary of Output:**
 Defined TypeScript interfaces `Recipe` and `UserFavorite` in `src/models/Recipe.ts` and `src/models/Favorite.ts`, re-exported via `src/models/index.ts`.
+
+---
+
+## Prompt 3: API Service Layer
+
+**Prompt Text:**
+> Create a service layer in a services/ folder that talks to 
+> TheMealDB API (https://www.themealdb.com/api/json/v1/1/). Implement:
+> - searchMeals(query: string) — calls the search.php endpoint
+> - getRandomMeals(count: number) — calls random.php the given number 
+>   of times
+> Map the raw API response shape to our Recipe model from src/models/.
+> 
+> Constraints:
+> - Do not call fetch directly from any component or view-model — all 
+>   network calls go through this service.
+> - Do not manage loading or error state here — just return data or 
+>   throw on failure.
+
+**Summary of Output:**
+Created API service layer in `src/services/mealApi.ts` implementing `searchMeals(query)` and `getRandomMeals(count)`, mapping raw TheMealDB JSON to the `Recipe` model without managing loading/error states inside the service.
