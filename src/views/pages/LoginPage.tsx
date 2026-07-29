@@ -11,15 +11,33 @@ export const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const getFriendlyErrorMessage = (code: string): string => {
+    switch (code) {
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        return 'Invalid email or password. Please check your credentials.';
+      case 'auth/invalid-email':
+        return 'Please enter a valid email address.';
+      case 'auth/too-many-requests':
+        return 'Too many failed attempts. Please try again later.';
+      default:
+        return 'Failed to log in. Please try again.';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
+
     try {
       await login(email, password);
       navigate('/');
     } catch (err: unknown) {
-      if (err instanceof Error) {
+      if (typeof err === 'object' && err !== null && 'code' in err) {
+        setError(getFriendlyErrorMessage(String((err as { code: unknown }).code)));
+      } else if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('Failed to log in. Please check your credentials.');

@@ -12,6 +12,19 @@ export const RegisterPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const getFriendlyErrorMessage = (code: string): string => {
+    switch (code) {
+      case 'auth/email-already-in-use':
+        return 'An account with this email address already exists. Please log in.';
+      case 'auth/weak-password':
+        return 'Password must be at least 6 characters long.';
+      case 'auth/invalid-email':
+        return 'Please enter a valid email address.';
+      default:
+        return 'Failed to create account. Please check your information and try again.';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -22,11 +35,14 @@ export const RegisterPage: React.FC = () => {
     }
 
     setIsSubmitting(true);
+
     try {
       await register(email, password);
       navigate('/');
     } catch (err: unknown) {
-      if (err instanceof Error) {
+      if (typeof err === 'object' && err !== null && 'code' in err) {
+        setError(getFriendlyErrorMessage(String((err as { code: unknown }).code)));
+      } else if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('Failed to create account. Please try again.');

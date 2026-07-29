@@ -43,10 +43,11 @@ export const searchMeals = async (query: string): Promise<Recipe[]> => {
 
 /**
  * Fetch a specified number of random meals by querying random.php endpoint multiple times.
+ * Includes explicit deduplication by recipe ID.
  */
 export const getRandomMeals = async (count: number): Promise<Recipe[]> => {
   const requests = Array.from({ length: count }, () =>
-    fetch(`${BASE_URL}/random.php`).then(async (res) => {
+    fetch(`${BASE_URL}/random.php`).then((res) => {
       if (!res.ok) {
         throw new Error(`Failed to fetch random meal: ${res.statusText}`);
       }
@@ -55,18 +56,16 @@ export const getRandomMeals = async (count: number): Promise<Recipe[]> => {
   );
 
   const results = await Promise.all(requests);
-  const recipes: Recipe[] = [];
-  const seenIds = new Set<string>();
+  
+  // Extract and map all valid recipe responses
+  const fetchedRecipes: Recipe[] = results
+    .filter((data) => data.meals && data.meals.length > 0)
+    .map((data) => mapRawToRecipe(data.meals[0]));
 
-  for (const data of results) {
-    if (data.meals && data.meals.length > 0) {
-      const recipe = mapRawToRecipe(data.meals[0]);
-      if (!seenIds.has(recipe.id)) {
-        seenIds.add(recipe.id);
-        recipes.push(recipe);
-      }
-    }
-  }
+  // Deduplicate array by unique recipe ID
+  const uniqueRecipes = fetchedRecipes.filter(
+    (recipe, index, self) => index === self.findIndex((r) => r.id === recipe.id)
+  );
 
-  return recipes;
+  return uniqueRecipes;
 };
