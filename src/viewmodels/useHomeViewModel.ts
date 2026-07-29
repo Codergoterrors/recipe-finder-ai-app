@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Recipe, UserFavorite } from '../models';
 import { getRandomMeals, searchMeals, addFavorite, removeFavorite, getFavorites } from '../services';
-
-const DEFAULT_USER_ID = 'test-user-1';
+import { useAuth } from './useAuth';
 
 export interface UseHomeViewModelReturn {
   recipes: Recipe[];
@@ -15,19 +14,24 @@ export interface UseHomeViewModelReturn {
 }
 
 export const useHomeViewModel = (initialRandomCount: number = 8): UseHomeViewModelReturn => {
+  const { user } = useAuth();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
   const loadFavorites = useCallback(async () => {
+    if (!user?.uid) {
+      setFavoriteIds(new Set());
+      return;
+    }
     try {
-      const favs = await getFavorites(DEFAULT_USER_ID);
+      const favs = await getFavorites(user.uid);
       const ids = new Set(favs.map((f) => f.id));
       setFavoriteIds(ids);
     } catch (err) {
       console.error('Failed to load favorites', err);
     }
-  }, []);
+  }, [user?.uid]);
 
   const loadRandomRecipes = useCallback(async () => {
     try {
@@ -40,8 +44,11 @@ export const useHomeViewModel = (initialRandomCount: number = 8): UseHomeViewMod
 
   useEffect(() => {
     loadRandomRecipes();
+  }, [loadRandomRecipes]);
+
+  useEffect(() => {
     loadFavorites();
-  }, [loadRandomRecipes, loadFavorites]);
+  }, [loadFavorites]);
 
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) {
@@ -66,10 +73,14 @@ export const useHomeViewModel = (initialRandomCount: number = 8): UseHomeViewMod
   };
 
   const toggleFavorite = async (recipe: Recipe) => {
+    if (!user?.uid) {
+      alert('Please log in to save favorites!');
+      return;
+    }
     const isFav = favoriteIds.has(recipe.id);
     try {
       if (isFav) {
-        await removeFavorite(DEFAULT_USER_ID, recipe.id);
+        await removeFavorite(user.uid, recipe.id);
         setFavoriteIds((prev) => {
           const next = new Set(prev);
           next.delete(recipe.id);
@@ -81,7 +92,7 @@ export const useHomeViewModel = (initialRandomCount: number = 8): UseHomeViewMod
           name: recipe.name,
           thumbnail: recipe.thumbnail,
         };
-        await addFavorite(DEFAULT_USER_ID, favorite);
+        await addFavorite(user.uid, favorite);
         setFavoriteIds((prev) => new Set(prev).add(recipe.id));
       }
     } catch (err) {

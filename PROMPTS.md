@@ -107,3 +107,34 @@ Created `useHomeViewModel` custom hook in `src/viewmodels/useHomeViewModel.ts` t
 
 **Summary of Output:**
 Initialized Firebase Realtime Database in `src/services/firebase.ts` reading Vite env vars. Built `favoritesService.ts` for Firebase RTDB CRUD operations under `favorites/${userId}`. Added favorite toggle (heart button) on Home recipe cards via `useHomeViewModel`, and implemented `useFavoritesViewModel` hook with `FavoritesPage.tsx` view.
+
+---
+
+## Prompt 6: Firebase Authentication & Protected Routes
+
+**Prompt Text:**
+> Add Firebase Authentication (email/password) to this project. Create 
+> src/services/authService.ts with register(email, password), 
+> login(email, password), and logout() functions using Firebase Auth.
+> 
+> Create an AuthViewModel/hook (useAuth) that exposes the current user 
+> and loading state, using Firebase's onAuthStateChanged listener.
+> 
+> Create Login and Register pages (src/views/pages/) with simple email/
+> password forms.
+> 
+> Replace the placeholder "test-user-1" user ID throughout the app 
+> (favorites logic) with the actual logged-in user's UID from the auth 
+> state. If no user is logged in, favorites-related actions should not 
+> attempt to run.
+> 
+> Add a route guard component that redirects unauthenticated users to 
+> the Login page if they try to visit /favorites. Add a Logout button 
+> in the Header, visible only when a user is logged in, and Login/
+> Register links visible only when logged out.
+> 
+> Constraint: keep the auth forms plain and functional — no additional 
+> UI library, plain CSS matching the existing style.
+
+**Summary of Output:**
+Implemented Firebase Authentication (`authService.ts`) with `register`, `login`, and `logout`. Built `AuthProvider` and `useAuth` hook listening to `onAuthStateChanged`. Created `LoginPage` and `RegisterPage` views with dark glassmorphic styling (`AuthPage.css`). Replaced placeholder `"test-user-1"` UID with authenticated `user?.uid`. Protected `/favorites` route using `ProtectedRoute.tsx` guard, and updated `Header` with dynamic Logout button and auth links.

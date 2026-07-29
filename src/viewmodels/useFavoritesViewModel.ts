@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { UserFavorite } from '../models';
 import { getFavorites, removeFavorite } from '../services';
-
-const DEFAULT_USER_ID = 'test-user-1';
+import { useAuth } from './useAuth';
 
 export interface UseFavoritesViewModelReturn {
   favorites: UserFavorite[];
@@ -11,24 +10,30 @@ export interface UseFavoritesViewModelReturn {
 }
 
 export const useFavoritesViewModel = (): UseFavoritesViewModelReturn => {
+  const { user } = useAuth();
   const [favorites, setFavorites] = useState<UserFavorite[]>([]);
 
   const loadFavorites = useCallback(async () => {
+    if (!user?.uid) {
+      setFavorites([]);
+      return;
+    }
     try {
-      const favList = await getFavorites(DEFAULT_USER_ID);
+      const favList = await getFavorites(user.uid);
       setFavorites(favList);
     } catch (err) {
       console.error('Failed to load user favorites', err);
     }
-  }, []);
+  }, [user?.uid]);
 
   useEffect(() => {
     loadFavorites();
   }, [loadFavorites]);
 
   const handleRemoveFavorite = async (recipeId: string) => {
+    if (!user?.uid) return;
     try {
-      await removeFavorite(DEFAULT_USER_ID, recipeId);
+      await removeFavorite(user.uid, recipeId);
       setFavorites((prev) => prev.filter((fav) => fav.id !== recipeId));
     } catch (err) {
       console.error('Failed to remove favorite', err);
